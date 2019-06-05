@@ -30,6 +30,7 @@ typedef struct sr_rule_statistics_s {
 typedef struct sr_worker_s {
   sr_rule_statistics_t arr_rule_stat[2][SR_RULE_SIZE];	// 워커별 로컬 정책 통계
   volatile uint32_t cur_arr_rule_stat_idx;				// Double Buffering Index
+  // uint32_t cur_arr_rule_stat_idx;						// Double Buffering Index
 } sr_worker_t;
 
 typedef struct sr_manager_s {
@@ -101,7 +102,7 @@ sr_worker_t *create_sr_worker(int64_t wrk_id) {
 	}
   }
 
-  //p_wrk->cur_arr_rule_stat_idx = 0;
+  p_wrk->cur_arr_rule_stat_idx = 0;
 
   return g_mgr.p_arr_wrk[wrk_id] = p_wrk;
 }
@@ -209,8 +210,8 @@ void *process_sr_worker(void *arg) {
       }
     }
 
-	// 스레드간 메모리 동기화를 위하여 mfence 명령을 추가
 	// __sync_synchronize();
+	// asm volatile("" ::: "memory");
   }
 
   return NULL;
